@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport"
+  content="width=device-width,
+  minimum-scale=1.0, maximum-scale=1.0" />
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+<div class="content">
+<div class="banner">
+CDE Internal Databases
+</div>
+
+
+
+<!--Start Content-->
+<h1>Brief History</h1>
+
+<p>In early Spring of 2013, the CDE Databases began as a class project. The first database attempted was the marketing request database. Soon, a budget request system was needed and placed at a higher priority than marketing. Budget replaced marketing for the class project and was completed, leaving marketing nearly completed. As summer came and the project was turned in, the creator left for an internship and did not return. I completely rewrote marketing using the crud classes described below. As the project became more and more involved, I forced myself to learn simple, yet important paradims such as OOP and DRY. I also half-assed attempted to work in the MVC paradigm, but that obviously didn't work out too well.</p>
+<p>By late 2013, a new database was needed, Coskrey. To this day, it has never been used, but it has been rumored that its deployment will soon be upon us.</p>
+<p>In mid-winter of 2014, I became aggrivated with budget, so I rebuilt it from the ground up. I also moved it to devel from its old server, budget.distance.</p>
+
+<h1>CRUD Classes</h1>
+<p>The core of these databases are driven by a set of classes responsible for Creation, Retrieval, Updating, and <span style="text-decoration:line-through;">Deletion</span> of database entries (aka CRUD). These classes are abstract classes, which are extended by a set of class definitions per object type.</p>
+
+
+<h2>DatabaseObject</h2>
+<ul>
+	<li>Responsible for CRUD operations on single objects</li>
+    <li>Provides a way to print an objects values in a human readable form</li>
+    <li>Includes functions to retrieve OTM and MTM tables (e.g. comments, assignments, ect.)
+    <aside>These functions should rarely be used directly.  They should be used in an override of the create or retreive CRUD functions.</aside></li>
+</ul>
+<h2>DatabaseObjectManager</h2>
+<ul>
+	<li>Provides static functions to manage multiple DatabaseObjects</li>
+    <li>Includes a function to get all instances or to get certain ones defined by a search parameter</li>
+    <li>Includes a function to print a table using fancyValues</li>
+</ul>
+
+<h2>SearchParameter</h2>
+<ul>
+	<li>Gives a structure to generate sql WHERE search terms.</li>
+    <li>Always joined together with 'AND'</li>
+    <li>Manager classes implement generateSearchParameters.  This will take GET or POST values from a form and generate search parameters from the names of each field.  Note that keys ending in _comp are used to replace an equivilancy test with a comparison test.  The best example to give here is <a href="http://devel.distance.msstate.edu/marketing/Request/searchForm.php" target="_blank">http://devel.distance.msstate.edu/marketing/Request/searchForm.php</a></li>
+    <li>The ordering is screwed up ('y = x' takes the form of 'y x ='). It may be worth it to refactor this class, but it would need to be done in all databases at once.</li>
+  </ul>
+<h1>Common Directory</h1>
+<p>The common directory contains all resources that are the same between all databases.  This includes php libraries, common classes, </p>
+<h2>PHP Classes</h2>
+
+    <h3>databaseObject.php</h3>
+    <p>DatabaseObject base class.</p>
+
+    <h3>databaseObjectManager.php</h3>
+    <p>DatabaseObjectManager base class.</p>
+
+    <h3>searchParameter.php</h3>
+    <p>SearchParameter definition</p>
+
+
+
+<h2>Javascript Libraries</h2>
+<h3>External</h3>
+
+    <h3>JQuery</h3>
+    <p>Yup. It's JQuery.</p>
+
+    <h3>JQuery UI</h3>
+    <p>Jquery Extension that adds a few UI elements.</p>
+
+    <h3>ajaxForm</h3>
+    <p>Support for autoSubmit script</p>
+
+    <h3>autocomplete</h3>
+    <p>A flexible jquery autocomplete form element. Used for vendors in Budget Requests.</p>
+
+    <h3>clockpick</h3>
+    <p>Jquery form element that allows users to select a time of day.</p>
+
+    <h3>sortable</h3>
+    <p>Allows tables to be sorted by clicking on the table header</p>
+
+    <h3>table2CSV</h3>
+    <p>Converts an html table to a CSV table. </p>
+
+<h3>Internal</h3>
+
+    <h3>autoSubmit</h3>
+    <p>Handles ajax submittion of many forms in the database. <br>
+Handles things like pop-up messages for success and error and redirects.</p>
+
+
+<h2>PHP Libraries</h2>
+
+    <h3>Medoo</h3>
+    <p>Lightweight PHP framework. Interfaces with the database most projects.</p>
+
+    <h3>Rollbar</h3>
+    <p>Tracks PHP errors. Errors can be viewed at <a href="https://rollbar.com/" target="_blank">https://rollbar.com/</a></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+<h1>Utility Directory</h1>
+<p>This section contains a description of the file structure used in the databases.  Note that older databases will not include all of these. @todo: include list</p>
+<h2>img/</h2>
+<p>Contains images.</p>
+<h2>source/</h2>
+<h3>classes/</h3>
+<p>This folder contains all classes that are used per database.  All files in this directory will be automatically included by shared.php (though not recursively).  In some cases, filenames begin with underscores.  This is so it will load before the other classes, though that probably should be done through include_once instead of having the include order be dependent on the filename.</p>
+<table>
+
+<tr>
+  <td>(classname).php</td><td>A derived class of database object</td>
+</tr>
+
+<tr>
+<td>(classname)Manager.php</td><td>A derived class of database object Manager</td>
+</tr>
+
+</table>
+<h3>access.php</h3>
+<p>This file contains functions that test whether or not a user can perform a certain action or view certain content.  These functions will typically use two database objects as a parameter, one of them being the user in question (don't try to grab the current user from inside the function, please).</p>
+<h3>email.php</h3>
+<p>This file contains functions that are responsible for sending any emails to users.</p>
+<h3>sessionVars.php</h3>
+<p>This file contains variables that are commonly used throughout the database. Many of the variables are the indexes of sessions variables. These MUST be unique across ALL databases.</p>
+<h3>functions.php</h3>
+<p>This file contains functions that do not fit into any other category.  The most important one is a function that returns a database connection.  I'm sure the existance of this file is extremely poor practice, so feel free to set it up a different way if you prefer.</p>
+
+<h2>style/</h2>
+<p>Contains css.</p>
+
+<h2>templates/</h2>
+<p>Contains php segments that are common among all pages. This doesn't include data from headers because the exact things that are included changes from page to page.</p>
+<h2>shared.php</h2>
+<p>Contains error handling code for all pages, as well as a series of includes to include many other php files. It automatically includes anything source/, though not recursively.</p>
+<h1>Common Examples</h1>
+<p>
+The following are a few expressions found across the application.  There are obviously many more than this, but this should be enought to get started.
+</p>
+<h3>Creating an databaseObject instance</h3>
+<p class="example">
+$myRequest = new Request();
+</p>
+<p><aside>This does not create an instance of the object in the database.</aside></p>
+
+
+<h3>Getting an object by its id</h3>
+<p class="example">
+$myRequest = new Request();<br>
+$myRequest-&gt;getByID('13');
+</p>
+
+<h3>Getting multible database objects</h3>
+<p class="example">
+$myRequestArray = RequestManager::getAll();
+</p>
+
+<h3>Printing a table of database objects</h3>
+<p class="example">
+$myRequestArray = RequestManager::getAll();<br>
+$printArray = array('id1', 'id2', 'id3', ...)<br>
+  RequestManager::printAll($myRequestArray, $printArray);
+</p>
+
+<h3>
+Creating an object in the database.
+</h3>
+<p class="example">
+$inData = $_GET;<br>
+$addObject = new Request($inData);<br>
+$addObject-&gt;create();
+</p>
+
+<h1>File Naming Convention</h1>
+<p>The file naming schema for general (top level) pages is pretty simple.  The beginning segment should be a verb that describes the action the page executes (view, edit, add, ect.).  Next is an optional 'All' that indicates that we're dealing with multiple objects.  The third segment is the name of the class that the page deals with.  The last segment is usually an action or a form.  As a rule of thumb, if the page directly outputs html, it is called a form.  Otherwise, it is an action page.</p>
+<p class="example">(verb) [all] (noun) (form/action) .php</p>
+<p>The casings of the filenames should always use camelcase.</p>
+
+<h1>Jquery AutoSubmit Format</h1>
+<p>autoSubmit.js utilizes the jquery autosubmit plugin to execute simple form submission.  It's pretty cool since all you do is call this function and it will handle both the submission and the response from the php action.</p>
+<p>The return format is a json encoded array:</p>
+<table>
+<tr>
+<td>success_bool</td>
+<td>Was the desired action successful?</td>
+</tr>
+<tr>
+<td>success_message</td>
+<td>Message that is displayed if successful.</td>
+</tr>
+<tr>
+<td>error_message</td>
+<td>Message displayed if not successful.</td>
+</tr>
+
+<tr>
+<td>debug_message</td>
+<td>Message displayed regardless of the success.  Used to debug.</td>
+</tr>
+
+<tr>
+<td>redirect_url</td>
+<td>URL the calling page should redirect to on success.</td>
+</tr>
+
+</table>
+
+<p>autoSubmit.js handles the messaging and redirects, so the only thing you should worry about is making sure that the return array gets properly encoded on the action page.</p>
+<p>If there is a php error on the action page, then an attempt to submit the form will end up doing nothing.  To debug this, I typically just comment out the javascript the autoSubmit initializer and refresh the page.  Attempting to submit under those conditions should show the php error. Perhapse the common setup could provide a way to return php errors too, but I've found debugging in web browser dialogue boxes to be more annoying than disabling the autosubmit.</p>
+<h1>Starting a New Project</h1>
+<p>To start a new project, I typically:</p>
+<ul>
+  <li>Copy and paste the youngest project.</li>
+  <li>Removed all files except for the Index, Login/Logout, Utility, User, and one file like Request.</li>
+  <li>Remove all unneeded classes as well.</li>
+  <li>Change db_name in all remaining classes.</li>
+  <li>Change the session variable names in sessionVars.php to reflect the new project.</li>
+  <li>Create tables for the new project.</li>
+  </ul>
+<h1>PHPDocumentor</h1>
+<p>phpDocumentor is used to automatically document php classes with docblocks.  To generate documents, execute the .phar file in /Docs using php. -d is the source directory, -t is the target.</p>
+<h3>Example</h3>
+<p class="example">php phpDocumentor.phar -d ../Budget/Utility/source -t ./Budget</p>
+<p>If there are errors in compiling the documents, you can view them by clicking "Reports->Errors" on the top navbar.  These include methods, classes, and functions that have no docblocks.</p>
+
+<h1>Generated Documentation</h1>
+<ul class="linkList">
+	<li><a href="/Docs/Budget/" target="_blank">http://devel.distance.msstate.edu/Docs/Budget/</a></li>
+</ul>
+
+<h1>Future Project Suggestions</h1>
+<h2>Testing Server</h2>
+<p>budget.distance.msstate.edu is now unused, and the current workflow does not use a testing server.  Though the option is there, Dreamweaver's native testing server workflow is horrible.  The best way seems to be creating a seperate site that points to the remote testing server but uses the same local files.</p>
+<h2>Framework Implementation</h2>
+<p>DatabaseObject and DatabaseObjectManager were created before I knew about frameworks.  Unfortunately, when I found out about them, I really didn't have time to research, learn, and implement a particular framework for all sites, so I focused on makeing what is here as clear as I can.  The next guy in line should strongly consider creating new databases using a framework and converting existing databases to use them.  Just a suggestion, though.</p>
+<h2>Central Authentication</h2>
+<p>As of May 21, 2014, there are 4 sets of usernames and passwords, and more seem to be on the way.  When these projects started out, no one really thought there would be more than 2, maybe 3.  Since users will NOT remember their passwords (or take the time to change them 50% of the time), there really needs to be a central place to authenticate a user.  Each user table should remain, but the username/password combos should be moved to its own place.</p>
+<h2>One Copy of Common Files</h2>
+<p>It would be nice to only have one copy of some common files used. For example...</p>
+<ul>
+<li>databaseObject.php</li>
+<li>databaseObjectManager.php</li>
+<li>jquery</li>
+<li>autoSubmit.js</li>
+<li>clockpick.js</li>
+<li>ect.</li>
+</ul>
+<h2>Marketing Upgrade</h2>
+<p>As of May 21, 2014, the marketing DB is lacking in organization and consistancy with the other databases. For instance, it does not use the DatabaseObjectManager class, the AJAX autoSubmit, or the minified jquery script.</p>
+
+<h1><!--End Content--></h1>
+</div>
+ <footer>
+ Tyler Darsey - May 8, 2014<br>
+I'm sorry
+
+</footer>
+
+</body>
+</html>
